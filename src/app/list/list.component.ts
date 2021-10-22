@@ -25,7 +25,6 @@ export class ListComponent implements OnInit {
     this.api.getRegions().subscribe(
       res => {
         this.regions = res
-        console.log(res, 'test')
       }
     )
   }

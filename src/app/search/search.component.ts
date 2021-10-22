@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild  } from '@angular/core';
 import { ApiService } from '../api.service';
 import {Observable} from 'rxjs';
-import {startWith, map} from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 
 export class Departements {
@@ -19,31 +18,37 @@ export class Departements {
 })
 export class SearchComponent implements OnInit {
   control = new FormControl();
-  departments: string[] = [];
-  filteredDepartments!: Observable<string[]>;
-  constructor(
-    public api: ApiService
-  ) { }
+  filteredOptions: Observable<string[]> | undefined;
+  allDepartments!: Departements[];
+  list: any[] | undefined;
+
+  @ViewChild('autocompleteInput') autocompleteInput: ElementRef | undefined;
+  @Output() onSelectedOption = new EventEmitter();
+
+  constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getDepartments(this.departments).subscribe(
-      res => {
-        this.departments = res
-        console.log(res, 'departments')
-      }
-    ),
-    this.filteredDepartments = this.control.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value))
-    );
-    console.log("filteredDepartments",this.filteredDepartments);
+    this.api.getDepartments().subscribe((posts) => {
+      this.allDepartments = posts;
+    });
+
+    this.control.valueChanges.subscribe((userInput) => {
+      let categoryList = this.filterList(userInput);
+      this.list = categoryList;
+    });
   }
-  private _filter(value: string): string[] {
-    const filterValue = this._normalizeValue(value);
-    console.log("departments array",this.departments);
-    return this.departments.filter((dep: any) => this._normalizeValue(dep).includes(filterValue));
-  }
-  private _normalizeValue(value: string): string {
-    return value.toLowerCase().replace(/\s/g, '');
+
+  filterList(val: any) {
+    if (typeof val != 'string') {
+      return [];
+    }
+    if (val === '' || val === null) {
+      return [];
+    }
+    return val
+      ? this.allDepartments.filter(
+          (s) => s.nom.toLowerCase().indexOf(val.toLowerCase()) != -1
+        )
+      : this.allDepartments;
   }
 }

@@ -6,15 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-
-  
+  searchOption: [] = [];
   constructor(
     public httpClient: HttpClient
   ) {
     
    }
-   getDepartments(searchDep: string[]){
-    const depUrl : string = `https://geo.api.gouv.fr/departements?nom=${searchDep}`
+   getDepartments(){
+    const depUrl : string = `https://geo.api.gouv.fr/departements`
     return this.httpClient.get<any>(depUrl);
   }
   getRegions(){

@@ -1,14 +1,4 @@
-<!-- <input
-  id="departments"
-  type="text"
-  [(ngModel)]="searchDep"
-  style="border: 0cm; height: 30px; width: 180px; background-color: #fafafa"
-  placeholder="Search"
-/>
-
-<p>Hello {{ searchDep }}!</p> -->
-
-<form class="example-form">
+<form>
   <input
     type="text"
     placeholder="Search for departments"
@@ -16,8 +6,17 @@
     [matAutocomplete]="auto"
   />
   <mat-autocomplete #auto="matAutocomplete">
-    <mat-option *ngFor="let dep of filteredDepartments | async" [value]="dep">
-      {{ dep }}
+    <mat-option
+      style="
+        background-color: rgba(51, 51, 42, 0.863);
+        color: beige;
+        margin-left: 15px;
+      "
+      *ngFor="let dep of list"
+      [value]="dep.nom"
+      (onSelectionChange)="filterList($event)"
+    >
+      {{ dep.nom }}
     </mat-option>
   </mat-autocomplete>
 </form>
